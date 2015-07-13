@@ -3,7 +3,7 @@ Package.describe({
   version: '0.8.0',
   summary: 'Adhoc api for A/B testing',
   git: 'https://github.com/AppAdhoc/meteor-adhoc.git',
-  documentation: 'README.md'
+  documentation: 'adhoc-client/README.md'
 });
 
 Package.onUse(function(api) {
