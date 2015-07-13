@@ -1,5 +1,5 @@
 Package.describe({
-  name: 'hualc:adhoc-server',
+  name: 'adhoc:adhoc-server',
   version: '0.8.2',
   summary: 'Adhoc api for A/B testing',
   git: 'https://github.com/AppAdhoc/meteor-adhoc/tree/master/adhoc-server',
