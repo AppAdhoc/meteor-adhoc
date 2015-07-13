@@ -2,8 +2,8 @@ Package.describe({
   name: 'adhoc:adhoc-client',
   version: '0.8.1',
   summary: 'Adhoc api for A/B testing',
-  git: 'https://github.com/AppAdhoc/meteor-adhoc.git',
-  documentation: 'adhoc-client/README.md'
+  git: 'https://github.com/AppAdhoc/meteor-adhoc/tree/master/adhoc-client',
+  documentation: 'README.md'
 });
 
 Package.onUse(function(api) {
