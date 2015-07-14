@@ -1,0 +1,14 @@
+/* CSS declarations go here */
+.planTitle{
+	height:300px; 
+	font-size:15em;
+	text-align:center
+}
+
+.center{
+	text-align:center
+}
+
+.showCase{
+	height:700px
+}
