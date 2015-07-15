@@ -2,8 +2,10 @@
 
 [![enter image description here](https://github.com/hualcAdhoc/meteor-adhoc/raw/master/adhoc-client/demo/public/demo.png)](http://appadhoc.com/optimizer)
 
+
 ### What is A/B Testing?
 A/B testing is a simple way to test changes to your page against the current design and determine which ones produce positive results. It is a method to validate that any new design or change to an element on your webpage is improving your conversion rate before you make that change to your site code.
+
 
 ### Getting started
 1. Create an account at <http://appadhoc.com/optimizer>
@@ -13,6 +15,7 @@ A/B testing is a simple way to test changes to your page against the current des
 ``` js
 adhoc.init('your appKey', 'client id')
 ```
+
 
 ### Set & Get Flags
 A flag is a variable for what you're testing. It can be a small change of an element or a whole set of changes. 
@@ -39,7 +42,7 @@ Then, use flags to display different design to users. Our [demo](https://github.
 ...
 </template>
 ```
-So we give the flag value to variation 'caseValue'
+So we give the flag value to variable 'caseValue'
 ```js
 Template.showCase.helpers({
 	caseValue: function(){
@@ -48,6 +51,7 @@ Template.showCase.helpers({
 })
 ```
 If you visit our demo web <http://abtestdemo.meteor.com> and you may see different content each time you refresh the page.   
+
 
 ### Tracking stats
 A stat is what you want to optimize in your app, e.g. more clicks on a certain button. Before tracking stats, visit [here](https://www.appadhoc.com/optimizer/console/#/stats) to define them. Then, use ``adhoc.incrementStat('stat name', value)`` for every stat, and we will record them. As we perform this function in [demo](https://github.com/AppAdhoc/meteor-adhoc/blob/master/adhoc-client/demo/client/adhoc.js) like this:
@@ -59,6 +63,7 @@ Template.showCase.events({
 }) 
 ```
 each time the button is clicked, the statistics of "action_btn_clicks" will increase by one. Make sure the stat name in code is consistent with what you defined on our web. 
+
 
 ###  Start testing
 When you finish integrating sdk, you may create a new [experiment](https://www.appadhoc.com/optimizer/console/#/newexp).  Reports with processed data will be reprensented [here](https://www.appadhoc.com/optimizer/console/#/testdata) after a while.
