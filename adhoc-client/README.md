@@ -15,7 +15,7 @@ adhoc.init('your appKey', 'client id')
 ```
 
 ### Set & Get Flags
-A flag is a variation based on what you're testing. It can be a small change of an element or a whole set of changes. 
+A flag is a variable for what you're testing. It can be a small change of an element or a whole set of changes. 
 #### Set flags for your test
 Click [here](https://www.appadhoc.com/optimizer/console/#/flags) to set flags.
 
@@ -47,10 +47,10 @@ Template.showCase.helpers({
 	}
 })
 ```
-If you visit our [demo web](abtestdemo.meteor.com) and you may see different content each time you refresh the page.   
+If you visit our demo web <abtestdemo.meteor.com> and you may see different content each time you refresh the page.   
 
 ### Tracking stats
-A stat is what you what to optimize in your app, e.g. more clicks on a certain button. Before tracking stats,  visit [here](https://www.appadhoc.com/optimizer/console/#/stats) to define them. Then, using api ``adhoc.incrementStat('stat name', value)``  and we will record them. As we perform this function in [demo](https://github.com/AppAdhoc/meteor-adhoc/blob/master/adhoc-client/demo/client/adhoc.js) like this:
+A stat is what you want to optimize in your app, e.g. more clicks on a certain button. Before tracking stats, visit [here](https://www.appadhoc.com/optimizer/console/#/stats) to define them. Then, using api ``adhoc.incrementStat('stat name', value)``  and we will record them. As we perform this function in [demo](https://github.com/AppAdhoc/meteor-adhoc/blob/master/adhoc-client/demo/client/adhoc.js) like this:
 ``` js
 Template.showCase.events({
 	'click #actionBtn': function(){
@@ -61,4 +61,4 @@ Template.showCase.events({
 each time the button is clicked, the statistics of "action_btn_clicks" will increase by one. Make sure the stat name in code is consistent with what you defined on our web. 
 
 ###  Start testing
-When you finish integrating sdk, you may create a new [test](https://www.appadhoc.com/optimizer/console/#/newexp).  Reports with processed data will be reprensented [here](https://www.appadhoc.com/optimizer/console/#/testdata) after a while.
+When you finish integrating sdk, you may create a new [experiment](https://www.appadhoc.com/optimizer/console/#/newexp).  Reports with processed data will be reprensented [here](https://www.appadhoc.com/optimizer/console/#/testdata) after a while.
