@@ -50,7 +50,7 @@ Template.showCase.helpers({
 If you visit our demo web <http://abtestdemo.meteor.com> and you may see different content each time you refresh the page.   
 
 ### Tracking stats
-A stat is what you want to optimize in your app, e.g. more clicks on a certain button. Before tracking stats, visit [here](https://www.appadhoc.com/optimizer/console/#/stats) to define them. Then, use ``adhoc.incrementStat('stat name', value)`` with your stat name, and we will record them. As we perform this function in [demo](https://github.com/AppAdhoc/meteor-adhoc/blob/master/adhoc-client/demo/client/adhoc.js) like this:
+A stat is what you want to optimize in your app, e.g. more clicks on a certain button. Before tracking stats, visit [here](https://www.appadhoc.com/optimizer/console/#/stats) to define them. Then, use ``adhoc.incrementStat('stat name', value)`` for every stat, and we will record them. As we perform this function in [demo](https://github.com/AppAdhoc/meteor-adhoc/blob/master/adhoc-client/demo/client/adhoc.js) like this:
 ``` js
 Template.showCase.events({
 	'click #actionBtn': function(){
