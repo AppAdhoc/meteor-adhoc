@@ -5,13 +5,12 @@
 //   getExperimentFlags(callback, callbackOnCache)
 //   incrementStat(stat, value)
 //   forceExperiment(qr_code)
-
-
+//
 (function(adhoc, document, window, undefined) {
 	'use strict';
 
 	var protocol = window.location.protocol === "https:" ? "https:" : "http:";
-	var ADHOC_GETFLAGS_URL = protocol + '//api.appadhoc.com/optimizer/api/getflags.php';
+	var ADHOC_GETFLAGS_URL = protocol + '//experiment.appadhoc.com/get_flags';
 	var ADHOC_FORCEEXP_URL = protocol + '//api.appadhoc.com/optimizer/api/forceexp.php';
 	var ADHOC_TRACKING_URL = protocol + '//tracking.appadhoc.com:23462';
 
@@ -44,62 +43,13 @@
 		return eval("(" + str + ")");
 	};
 
-	// Micro implementaiton of AJAX.
-	var AJAX = function(url, data, callback) {
-		var x = new XMLHttpRequest();
-		if (callback != null) {
-			x.onload = callback;
-		}
-		x.open("POST", url);
-		x.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-		x.send(JSON.stringify(data));
-	};
-
-	// Micro JSONP implementation.
-	var JSONP = function(url, data, callback) {
-		url = url || '';
-		data = data || {};
-	 	callback = callback || function(){};
-
-		// NOTE we assume urlencode is not needed.
-		if (typeof data == 'object') {
-			url += '?data=' + JSON.stringify(data);
-		}
-
-		// Allow parallel requests by time multiplexing.
-		var timestamp = Date.now();
-		var generatedFunction = 'jsonp' + Math.round(timestamp + Math.random() * 1000001)
-		window[generatedFunction] = function(json) {
-			//TODO: maybe compress the entire flag JSON obj into one cookie.
-			//setCookie("ADHOC_FLAGS", encodeURIComponent(JSON.stringify(json)), 14);
-			for (var k in json) {
-				setCookie("ADHOC_FLAG_" + k, json[k], 14);
-			}
-			callback(json);
-			delete window[generatedFunction];
-		};
-
-		// Generate callback JSONP requst URL.
-		if (url.indexOf('?') === -1) {
-		 	url = url+'?' ;
-		} else {
-		 	url = url+'&';
-		}
-		url = url + "callback=" + generatedFunction;
-
-		// Generate JSONP script tag: requring head tag.
-		var jsonpScript = document.createElement('script');
-		jsonpScript.setAttribute("src", url);
-		document.getElementsByTagName("head")[0].appendChild(jsonpScript);
-	};
-
 	var getCookie = function(cname) {
 		var name = cname + "=";
 		var ca = document.cookie.split(';');
 		for(var i = 0; i < ca.length; i++) {
 			var c = ca[i];
 			while(c.charAt(0) == ' ') c = c.substring(1);
-			if(c === cname) return c.substring(name.length, c.length);
+			if(c.startsWith(cname)) return c.substring(name.length, c.length);
 		}
 		return null;
 	};
@@ -115,7 +65,7 @@
 	};
 
 	var getCachedFlags = function() {
-		//TODO: maybe compress the entire flags into one cookie.
+		//TODO: if possible, compress all flags into one cookie.
 		// var flags = getCookie("ADHOC_FLAGS") || "{}";
 		// return JSON.parse(decodeURIComponent(flags));
 		var flags = {};
@@ -138,6 +88,29 @@
 			}
 		}
 		return flags;
+	};
+
+	// Micro implementaiton of AJAX.
+	var AJAX = function(url, data, callback) {
+		url = url || '';
+		data = data || {};
+
+		var x = new XMLHttpRequest();
+		if (callback != null) {
+			x.onload = function() {
+				var json = JSON.parse(this.responseText);
+				// Cache response data, mostly for flags.
+				//TODO: if possible, compress the entire JSON obj into one cookie.
+				//setCookie("ADHOC_FLAGS", encodeURIComponent(JSON.stringify(json)), 365);
+				for (var k in json) {
+					setCookie("ADHOC_FLAG_" + k, json[k], 365);
+				}
+				callback(json);
+			};
+		}
+		x.open("POST", url);
+		x.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+		x.send(JSON.stringify(data));
 	};
 
 	var getBrowserInfo = function() {
@@ -168,10 +141,24 @@
 
 	var thisAdhoc = adhoc;
 
+	thisAdhoc.generateClientId = function() {
+		function s4() {
+			return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+		}
+		return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+	};
+
 	thisAdhoc.init = function(appKey, clientId) {
 		thisAdhoc.ak = appKey;  // ak as appKey
+
 		// If App specifies client id, use it. Otherwise, use cookie for id.
-		thisAdhoc.c = clientId || getCookie('ADHOC_MEMBERSHIP_CLIENT_ID');  // c as clientId
+		var cookieClientId = String(getCookie('ADHOC_MEMBERSHIP_CLIENT_ID'));
+		if (cookieClientId == null) {
+			cookieClientId = thisAdhoc.generateClientId();
+			setCookie('ADHOC_MEMBERSHIP_CLIENT_ID', cookieClientId, 365);
+		}
+		thisAdhoc.c = clientId || cookieClientId;  // c as clientId
+		thisAdhoc.c = String(thisAdhoc.c);
 	}
 
 	thisAdhoc.getCachedExperimentFlags = function() {
@@ -186,20 +173,19 @@
 
 		var b = getBrowserInfo();
 		var data = {
-			adhoc_app_track_id: thisAdhoc.ak,
-			event_type: 'GET_EXPERIMENT_FLAGS',
-			timestamp: Date.now() / 1000,
+			app_key: thisAdhoc.ak,
 			summary: {
 				OS: b.n,
 				OS_version: b.v
-			}
+			},
+			custom: {}
 		};
-		// Note for a new client, we may not have client_id yet.
+		// Note for a new client, we may not have client_id yet, so we query the server to get one.
 		if(thisAdhoc.c != null) {
 			data.client_id = thisAdhoc.c;
 		}
 
-		JSONP(ADHOC_GETFLAGS_URL, data, callback);
+		AJAX(ADHOC_GETFLAGS_URL, data, callback);
 	};
 
 	thisAdhoc.incrementStat = function(stat, value) {
@@ -225,7 +211,8 @@
 			client_id: thisAdhoc.c,
 			qr_code: qr_code
 		};
-		JSONP(ADHOC_FORCEEXP_URL, data, null);
+
+		AJAX(ADHOC_FORCEEXP_URL, data, null);
 	};
 
 }((window.adhoc = typeof Object.create !== 'undefined' ? Object.create(null) : {}), document, window));

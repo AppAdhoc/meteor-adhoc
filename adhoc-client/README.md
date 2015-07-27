@@ -66,4 +66,4 @@ each time the button is clicked, the statistics of "action_btn_clicks" will incr
 
 
 ###  Start testing
-When you finish integrating sdk, you may create a new [experiment](https://www.appadhoc.com/optimizer/console/#/newexp).  Reports with processed data will be reprensented [here](https://www.appadhoc.com/optimizer/console/#/testdata) after a while.
+When you finish integrating sdk, you may create a new [experiment](https://www.appadhoc.com/optimizer/console/#/newexp).  Reports with processed data will be represented [here](https://www.appadhoc.com/optimizer/console/#/testdata) after a while.
